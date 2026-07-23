@@ -1,4 +1,12 @@
+Create DATABASE SocialMediaProject;
+GO
+
+Use SocialMediaProject;
+GO
+
 DROP TABLE users CASCADE constraints;
+DROP TABLE posts cascade constraints;
+DROP TABLE likes cascade constraints;
 
 CREATE TABLE users(
     id number(9,0)  DEFAULT idGenerator.NEXTVAL primary key,
