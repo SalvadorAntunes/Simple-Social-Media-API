@@ -4,7 +4,7 @@ GO
 USE SocialMediaProject;
 GO
 
--- Drop tables if they exist (children first)
+-- Drop tables if they exist
 DROP TABLE IF EXISTS likes;
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS posts;
@@ -13,12 +13,13 @@ GO
 
 -- Users table
 CREATE TABLE users(
-    id INT PRIMARY KEY,
-    username VARCHAR(15) UNIQUE,
-    email VARCHAR(254) UNIQUE,
-    uName VARCHAR(15),
-    [password] VARCHAR(15),
-    dateOfBirth DATE,
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    username VARCHAR(15) NOT NULL UNIQUE,
+    email VARCHAR(254) NOT NULL UNIQUE,
+    uName VARCHAR(15) NOT NULL,
+    [password] NVARCHAR(MAX) NOT NULL,
+    dateOfBirth DATE NOT NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
 );
 GO
 
@@ -26,8 +27,8 @@ GO
 CREATE TABLE posts(
     id INT IDENTITY(1,1) PRIMARY KEY,
     userID INT NOT NULL,
-    postDate DATE,
-    [text] VARCHAR(250),
+    postDate DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    [text] VARCHAR(250) NOT NULL,
 
     CONSTRAINT FK_Posts_User
         FOREIGN KEY (userID)
@@ -37,10 +38,14 @@ GO
 
 -- Comments table
 CREATE TABLE comments(
-    id INT PRIMARY KEY,
+    id INT IDENTITY(1,1) PRIMARY KEY,
     postCommented INT NOT NULL,
 
-    CONSTRAINT FK_Comments_Post
+    CONSTRAINT FK_Comment_Itself
+        FOREIGN KEY (id)
+        REFERENCES posts(id),
+
+    CONSTRAINT FK_Commented_Post
         FOREIGN KEY (postCommented)
         REFERENCES posts(id)
 );
@@ -64,7 +69,7 @@ CREATE TABLE likes(
 GO
 
 -- Function to count likes
-CREATE FUNCTION likeNumber(@id INT)
+CREATE OR ALTER FUNCTION likeNumber(@id INT)
 RETURNS INT
 AS
 BEGIN
@@ -79,7 +84,7 @@ END;
 GO
 
 -- Function to count comments
-CREATE FUNCTION commentsNumber(@id INT)
+CREATE OR ALTER FUNCTION commentsNumber(@id INT)
 RETURNS INT
 AS
 BEGIN
