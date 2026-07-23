@@ -30,12 +30,12 @@ public partial class AppDbContext : DbContext
     {
         modelBuilder.Entity<Comment>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__comments__3213E83F75865D22");
+            entity.HasKey(e => e.Id).HasName("PK__comments__3213E83F9D501F0E");
 
             entity.ToTable("comments");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedOnAdd()
+                .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.PostCommented).HasColumnName("postCommented");
 
@@ -52,7 +52,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Post>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__posts__3213E83F4E9F09B9");
+            entity.HasKey(e => e.Id).HasName("PK__posts__3213E83FF390F48A");
 
             entity.ToTable("posts");
 
@@ -74,13 +74,13 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__users__3213E83FC7347A38");
+            entity.HasKey(e => e.Id).HasName("PK__users__3213E83F465566F9");
 
             entity.ToTable("users");
 
-            entity.HasIndex(e => e.Email, "UQ__users__AB6E6164A900B97C").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__users__AB6E616406A476CB").IsUnique();
 
-            entity.HasIndex(e => e.Username, "UQ__users__F3DBC5720B5D4A53").IsUnique();
+            entity.HasIndex(e => e.Username, "UQ__users__F3DBC5721547DD1E").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");

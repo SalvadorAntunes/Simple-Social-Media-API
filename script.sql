@@ -38,7 +38,7 @@ GO
 
 -- Comments table
 CREATE TABLE comments(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT PRIMARY KEY,
     postCommented INT NOT NULL,
 
     CONSTRAINT FK_Comment_Itself
