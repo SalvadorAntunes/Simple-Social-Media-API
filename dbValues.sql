@@ -18,8 +18,8 @@ INSERT INTO users (username, email, uName, [password], dateOfBirth) VALUES
 GO
 
 -- =========================================
--- INSERT POSTS (publicações "originais")
--- IDs esperados: 1..10
+-- INSERT POSTS
+-- Expected IDs: 1..10
 -- =========================================
 INSERT INTO posts (userID, [text]) VALUES
 (1, 'Bom dia! Alguém tem sugestões de livros de ficção científica?'),   -- id 1
@@ -36,11 +36,9 @@ GO
 
 -- =========================================
 -- INSERT COMMENTS
--- Cada comentário é PRIMEIRO um post (na tabela posts),
--- e depois é registado em comments a apontar ao post original.
 -- =========================================
 
--- Comentário ao post 1 (livros ficção científica)
+-- Comment to post 1
 INSERT INTO posts (userID, [text]) VALUES (2, 'Recomendo "Duna" do Frank Herbert!');           -- id 11
 INSERT INTO comments (id, postCommented) VALUES (11, 1);
 
@@ -50,50 +48,50 @@ INSERT INTO comments (id, postCommented) VALUES (12, 1);
 INSERT INTO posts (userID, [text]) VALUES (7, '"Neuromancer" do Gibson, cyberpunk clássico.'); -- id 13
 INSERT INTO comments (id, postCommented) VALUES (13, 1);
 
--- Comentários ao post 2 (projeto SQL)
+-- Comment to post 2
 INSERT INTO posts (userID, [text]) VALUES (3, 'Parabéns! SQL Server é excelente.');            -- id 14
 INSERT INTO comments (id, postCommented) VALUES (14, 2);
 
 INSERT INTO posts (userID, [text]) VALUES (8, 'Boa Maria! Partilha o repositório.');           -- id 15
 INSERT INTO comments (id, postCommented) VALUES (15, 2);
 
--- Comentários ao post 3 (trânsito)
+-- Comment to post 3 
 INSERT INTO posts (userID, [text]) VALUES (4, 'Confirmo, demorei 1h para 5km 😤');             -- id 16
 INSERT INTO comments (id, postCommented) VALUES (16, 3);
 
 INSERT INTO posts (userID, [text]) VALUES (6, 'Metro é sempre a melhor opção.');               -- id 17
 INSERT INTO comments (id, postCommented) VALUES (17, 3);
 
--- Comentários ao post 4 (café para trabalhar)
+-- Comment to post 4
 INSERT INTO posts (userID, [text]) VALUES (1, 'O Fábrica Coffee Roasters em Lisboa é top.');   -- id 18
 INSERT INTO comments (id, postCommented) VALUES (18, 4);
 
 INSERT INTO posts (userID, [text]) VALUES (5, 'Copenhagen Coffee Lab, tem bom wifi.');         -- id 19
 INSERT INTO comments (id, postCommented) VALUES (19, 4);
 
--- Comentário ao post 5 (filme Villeneuve)
+--  Comment to post 5
 INSERT INTO posts (userID, [text]) VALUES (2, 'Vi ontem, a fotografia é de outro mundo.');     -- id 20
 INSERT INTO comments (id, postCommented) VALUES (20, 5);
 
--- Comentário ao post 7 (joins SQL)
+--  Comment to post 7
 INSERT INTO posts (userID, [text]) VALUES (2, 'INNER JOIN = interseção; LEFT JOIN = tudo da esquerda + match.'); -- id 21
 INSERT INTO comments (id, postCommented) VALUES (21, 7);
 
 INSERT INTO posts (userID, [text]) VALUES (3, 'Vê o site sql-joins do Ligaya, tem diagramas.'); -- id 22
 INSERT INTO comments (id, postCommented) VALUES (22, 7);
 
--- Comentário ao post 8 (gata)
+--  Comment to post 8
 INSERT INTO posts (userID, [text]) VALUES (6, 'Hahaha os gatos são assim mesmo 🐱');            -- id 23
 INSERT INTO comments (id, postCommented) VALUES (23, 8);
 
--- Comentário ao post 10 (Portugal ganhou)
+-- Comment to post 10
 INSERT INTO posts (userID, [text]) VALUES (7, 'Que noite épica! 🇵🇹⚽');                        -- id 24
 INSERT INTO comments (id, postCommented) VALUES (24, 10);
 
 INSERT INTO posts (userID, [text]) VALUES (8, 'Ainda estou eufórica!');                        -- id 25
 INSERT INTO comments (id, postCommented) VALUES (25, 10);
 
--- Resposta a comentário (comentário do comentário 11)
+--  Comment to comment 11
 INSERT INTO posts (userID, [text]) VALUES (1, 'Já li Duna, adorei! Obrigado pela dica.');      -- id 26
 INSERT INTO comments (id, postCommented) VALUES (26, 11);
 
@@ -101,7 +99,6 @@ GO
 
 -- =========================================
 -- INSERT LIKES
--- Um utilizador não pode dar like duas vezes ao mesmo post (PK composta).
 -- =========================================
 INSERT INTO likes (userID, postID) VALUES
 -- Post 1
@@ -122,9 +119,9 @@ INSERT INTO likes (userID, postID) VALUES
 (1, 8), (2, 8), (4, 8), (5, 8), (6, 8), (7, 8),
 -- Post 9
 (2, 9), (4, 9), (6, 9),
--- Post 10 (post popular)
+-- Post 10 (popular post)
 (1, 10), (2, 10), (4, 10), (5, 10), (6, 10), (7, 10), (8, 10),
--- Likes em comentários (também são posts)
+-- Likes to comments
 (1, 11), (4, 11), (6, 12),
 (1, 14), (7, 15),
 (2, 21), (4, 21), (5, 21), (6, 21), (7, 21),
@@ -132,7 +129,7 @@ INSERT INTO likes (userID, postID) VALUES
 GO
 
 -- =========================================
--- Verificação rápida
+-- Verification
 -- =========================================
 SELECT p.id, u.username, p.[text],
        dbo.likeNumber(p.id)     AS likes,
