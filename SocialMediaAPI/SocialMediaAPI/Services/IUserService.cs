@@ -1,14 +1,15 @@
-﻿using SocialMediaAPI.Models;
+﻿using SocialMediaAPI.Dtos;
+using SocialMediaAPI.Models;
 
 namespace SocialMediaAPI.Services
 {
     public interface IUserService
     {
-        Task<List<User>> GetUsersAsync();
+        Task<List<UserResponse>> GetUsersAsync();
 
-        Task<User?> GetUserByIdAsync(int id);
+        Task<UserResponse?> GetUserByIdAsync(int id);
 
-        Task<User> AddUserAsync(User user);
+        Task<User> CreateUserAsync(User user);
 
         Task<bool> UpdateUserAsync(int id, User user);
 
