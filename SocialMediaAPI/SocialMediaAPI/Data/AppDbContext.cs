@@ -23,7 +23,6 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=SocialMediaProject;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -66,7 +65,7 @@ public partial class AppDbContext : DbContext
                 .HasColumnName("text");
             entity.Property(e => e.UserId).HasColumnName("userID");
 
-            entity.HasOne(d => d.User).WithMany(p => p.PostsNavigation)
+            entity.HasOne(d => d.User).WithMany(p => p.Posts)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Posts_User");
@@ -99,7 +98,7 @@ public partial class AppDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("username");
 
-            entity.HasMany(d => d.Posts).WithMany(p => p.Users)
+            entity.HasMany(d => d.LikedPosts).WithMany(p => p.Users)
                 .UsingEntity<Dictionary<string, object>>(
                     "Like",
                     r => r.HasOne<Post>().WithMany()

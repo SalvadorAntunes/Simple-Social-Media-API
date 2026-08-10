@@ -34,14 +34,14 @@ namespace SocialMediaAPI.Controllers
         public async Task<ActionResult<UserResponse>> UpdateUser(int id, CreateUpdateUserRequest user)
         {
             var updatedUser = await service.UpdateUserAsync(id, user);
-            return updatedUser ? NotFound("User not found") : Ok(updatedUser);
+            return updatedUser ? Ok(updatedUser) : NotFound("User not found");
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<UserResponse>> DeleteUser(int id)
         {
             var deletedUser = await service.DeleteUserAsync(id);
-            return deletedUser ? NotFound("User not found") : Ok(deletedUser);
+            return deletedUser ? Ok(deletedUser) : NotFound("User not found");
         }
     }
 }

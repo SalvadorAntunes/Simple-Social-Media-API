@@ -12,8 +12,8 @@ namespace SocialMediaAPI.Services
             {
                 Username = u.Username,
                 UName = u.UName,
-                PostsNavigation = u.PostsNavigation,
-                Posts = u.Posts
+                Posts = u.Posts,
+                LikedPosts = u.LikedPosts
             }).ToListAsync();
 
         public async Task<UserResponse?> GetUserByIdAsync(int id)
@@ -22,8 +22,8 @@ namespace SocialMediaAPI.Services
             {
                 Username = u.Username,
                 UName = u.UName,
-                PostsNavigation = u.PostsNavigation,
-                Posts = u.Posts
+                Posts = u.Posts,
+                LikedPosts = u.LikedPosts
             }).FirstOrDefaultAsync();
 
         public async Task<User> CreateUserAsync(CreateUpdateUserRequest user)

@@ -4,7 +4,7 @@ namespace SocialMediaAPI.Dtos
 {
     public class UserResponse
     {
-        //public int Id { get; set; }
+        public int Id { get; set; }
 
         public string Username { get; set; } = null!;
 
@@ -18,8 +18,8 @@ namespace SocialMediaAPI.Dtos
 
         //public DateTime CreatedAt { get; set; }
 
-        public virtual ICollection<Post> PostsNavigation { get; set; } = new List<Post>();
+        public virtual ICollection<Post> Posts{ get; set; } = new List<Post>();
 
-        public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
+        public virtual ICollection<Post> LikedPosts { get; set; } = new List<Post>();
     }
 }
