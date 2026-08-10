@@ -24,10 +24,24 @@ namespace SocialMediaAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserResponse>> CreateUser(User user)
+        public async Task<ActionResult<UserResponse>> CreateUser(CreateUpdateUserRequest user)
         {
             var createdUser = await service.CreateUserAsync(user);
             return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<UserResponse>> UpdateUser(int id, CreateUpdateUserRequest user)
+        {
+            var updatedUser = await service.UpdateUserAsync(id, user);
+            return updatedUser ? NotFound("User not found") : Ok(updatedUser);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<UserResponse>> DeleteUser(int id)
+        {
+            var deletedUser = await service.DeleteUserAsync(id);
+            return deletedUser ? NotFound("User not found") : Ok(deletedUser);
         }
     }
 }

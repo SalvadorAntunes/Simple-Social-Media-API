@@ -9,9 +9,9 @@ namespace SocialMediaAPI.Services
 
         Task<UserResponse?> GetUserByIdAsync(int id);
 
-        Task<User> CreateUserAsync(User user);
+        Task<User> CreateUserAsync(CreateUpdateUserRequest user);
 
-        Task<bool> UpdateUserAsync(int id, User user);
+        Task<bool> UpdateUserAsync(int id, CreateUpdateUserRequest user);
 
         Task<bool> DeleteUserAsync(int id);
     }

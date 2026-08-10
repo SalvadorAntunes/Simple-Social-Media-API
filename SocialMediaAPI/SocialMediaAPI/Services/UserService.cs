@@ -26,19 +26,46 @@ namespace SocialMediaAPI.Services
                 Posts = u.Posts
             }).FirstOrDefaultAsync();
 
-        public Task<User> CreateUserAsync(User user)
+        public async Task<User> CreateUserAsync(CreateUpdateUserRequest user)
         {
-            throw new NotImplementedException();
+            var newUser = new User
+            {
+                Username = user.Username,
+                Email = user.Email,
+                UName = user.UName,
+                Password = user.Password,
+                DateOfBirth = user.DateOfBirth
+            };
+            context.Users.Add(newUser);
+            await context.SaveChangesAsync();
+            return newUser;
         }
 
-        public Task<bool> DeleteUserAsync(int id)
+        public async Task<bool> DeleteUserAsync(int id)
         {
-            throw new NotImplementedException();
+            var user = await context.Users.FindAsync(id);
+            if (user is null)
+                return false;
+
+            context.Users.Remove(user);
+            await context.SaveChangesAsync();
+            return true;
         }
-        
-        public Task<bool> UpdateUserAsync(int id, User user)
+
+        public async Task<bool> UpdateUserAsync(int id, CreateUpdateUserRequest user)
         {
-            throw new NotImplementedException();
+            var existingUser = await context.Users.FindAsync(id);
+            if (existingUser is null)
+                return false;
+
+            existingUser.Username = user.Username;
+            existingUser.Email = user.Email;
+            existingUser.UName = user.UName;
+            existingUser.Password = user.Password;
+            existingUser.DateOfBirth = user.DateOfBirth;
+
+            await context.SaveChangesAsync();
+            return true;
         }
     }
 }
