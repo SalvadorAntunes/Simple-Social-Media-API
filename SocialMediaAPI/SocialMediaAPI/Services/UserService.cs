@@ -10,6 +10,7 @@ namespace SocialMediaAPI.Services
         public async Task<List<UserResponse>> GetUsersAsync()
             => await context.Users.Select(u => new UserResponse
             {
+                Id = u.Id,
                 Username = u.Username,
                 UName = u.UName,
                 Posts = u.Posts,
@@ -20,6 +21,7 @@ namespace SocialMediaAPI.Services
             => await context.Users.Where(u => u.Id == id).
             Select(u => new UserResponse
             {
+                Id = u.Id,
                 Username = u.Username,
                 UName = u.UName,
                 Posts = u.Posts,

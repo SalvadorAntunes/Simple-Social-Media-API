@@ -8,8 +8,6 @@ namespace SocialMediaAPI.Dtos
 
         public int UserId { get; set; }
 
-        public string AuthorUsername { get; set; } = string.Empty;
-
         public DateTime PostDate { get; set; }
 
         public string Text { get; set; } = null!;
@@ -18,8 +16,8 @@ namespace SocialMediaAPI.Dtos
 
         public virtual ICollection<Comment> CommentPostCommentedNavigations { get; set; } = new List<Comment>();
 
-        public virtual User User { get; set; } = null!;
+        public virtual UserInfo User { get; set; } = null!;
 
-        public virtual ICollection<User> Users { get; set; } = new List<User>();
+        public virtual ICollection<UserInfo> Users { get; set; } = new List<UserInfo>();
     }
 }

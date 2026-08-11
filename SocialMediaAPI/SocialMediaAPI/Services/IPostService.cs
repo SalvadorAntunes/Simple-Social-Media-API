@@ -9,7 +9,7 @@ namespace SocialMediaAPI.Services
 
         Task<PostResponse?> GetPostByIdAsync(int id);
 
-        Task<Post> CreatePostAsync(CreatePostRequest user);
+        Task<PostResponse> CreatePostAsync(CreatePostRequest user);
 
         Task<bool> DeletePostAsync(int id);
     }
