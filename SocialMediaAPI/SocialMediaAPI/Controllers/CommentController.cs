@@ -23,10 +23,10 @@ namespace SocialMediaAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Comment>> CreateComment(CreateCommentRequest request)
+        public async Task<ActionResult<CommentResponse>> CreateComment(CreateCommentRequest request)
         {
             var comment = await service.CreateCommentAsync(request);
-            return CreatedAtAction(nameof(GetCommentById), new { id = comment.Id }, comment);
+            return Ok(comment);
         }
 
         [HttpDelete("{id}")]

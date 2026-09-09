@@ -10,7 +10,7 @@ namespace SocialMediaAPI.Services
 
         Task<CommentResponse?> GetCommentByIdAsync(int id);
 
-        Task<Comment> CreateCommentAsync(CreateCommentRequest request);
+        Task<CommentResponse> CreateCommentAsync(CreateCommentRequest request);
 
         Task<bool> DeleteCommentAsync(int id);
     }

@@ -15,8 +15,6 @@ namespace SocialMediaAPI.Services
             {
                 PostCommented = c.PostCommented,
                 CommentItself = _postService.GetPostByIdAsync(c.Id).Result,
-                IdNavigation = c.IdNavigation,
-                PostCommentedNavigation = c.PostCommentedNavigation
             }).ToList();
 
         public async Task<CommentResponse?> GetCommentByIdAsync(int id)
@@ -24,8 +22,6 @@ namespace SocialMediaAPI.Services
             {
                 PostCommented = c.PostCommented,
                 CommentItself = _postService.GetPostByIdAsync(c.Id).Result,
-                IdNavigation = c.IdNavigation,
-                PostCommentedNavigation = c.PostCommentedNavigation
             }).FirstOrDefault();
 
         public async Task<bool> DeleteCommentAsync(int id)
@@ -43,7 +39,7 @@ namespace SocialMediaAPI.Services
             return true;
         }
 
-        public async Task<Comment> CreateCommentAsync(CreateCommentRequest request)
+        public async Task<CommentResponse> CreateCommentAsync(CreateCommentRequest request)
         {
             var post = request.PostInfo;
 
@@ -70,7 +66,19 @@ namespace SocialMediaAPI.Services
             };
             context.Comments.Add(newComment);
             await context.SaveChangesAsync(); 
-            return newComment;
+            var respondse = new CommentResponse
+            {
+                PostCommented = newComment.PostCommented,
+                CommentItself = new PostResponse
+                {
+                    Id = newPost.Id,
+                    UserId = newPost.UserId,
+                    PostDate = newPost.PostDate,
+                    Text = newPost.Text
+                },
+               
+            };
+            return respondse;
         }
       
         

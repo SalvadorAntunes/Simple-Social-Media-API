@@ -6,10 +6,7 @@ namespace SocialMediaAPI.Dtos
     {
         public int PostCommented { get; set; }
 
-        public PostResponse CommentItself { get; set; }
+        public required PostResponse CommentItself { get; set;}
 
-        public virtual Post IdNavigation { get; set; } = null!;
-
-        public virtual Post PostCommentedNavigation { get; set; } = null!;
     }
 }
