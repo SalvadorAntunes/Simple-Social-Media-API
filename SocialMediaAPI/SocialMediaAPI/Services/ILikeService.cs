@@ -5,6 +5,7 @@ namespace SocialMediaAPI.Services
 {
     public interface ILikeService
     {
-        Task<List<LikeResponse>> GetLikesAsync();
+        Task<bool> AddLikeAsync(Like request);
+        Task<bool> RemoveLikeAsync(Like request);
     }
 }

@@ -1,0 +1,8 @@
+﻿namespace SocialMediaAPI.Models
+{
+    public class Like
+    {
+        public int UserId { get; set; }
+        public int PostId { get; set; }
+    }
+}

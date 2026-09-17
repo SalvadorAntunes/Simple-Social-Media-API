@@ -22,6 +22,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<Like> Likes { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=SocialMediaProject;Trusted_Connection=True;TrustServerCertificate=True;");
 

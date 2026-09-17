@@ -1,12 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SocialMediaAPI.Data;
+using SocialMediaAPI.Dtos;
+using SocialMediaAPI.Models;
+using SocialMediaAPI.Services;
 
 namespace SocialMediaAPI.Controllers
 {
-    public class LikeController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class LikeController(ILikeService service) : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        
+        [HttpPost]
+        public async Task<ActionResult<bool>> AddPost(Like request)
+            => Ok(await service.AddLikeAsync(request));
+        
+
+        [HttpDelete]
+        public async Task<ActionResult<bool>> RemovePost(Like request)
+            => Ok(await service.RemoveLikeAsync(request));
     }
 }
