@@ -1,6 +1,72 @@
 @SocialMediaAPI_HostAddress = http://localhost:5291
 
-GET {{SocialMediaAPI_HostAddress}}/weatherforecast/
+### List users
+GET {{SocialMediaAPI_HostAddress}}/api/User
 Accept: application/json
 
-###
+### Get a user
+GET {{SocialMediaAPI_HostAddress}}/api/User/1
+Accept: application/json
+
+### Create a user
+POST {{SocialMediaAPI_HostAddress}}/api/User
+Content-Type: application/json
+
+{
+  "username": "newuser",
+  "email": "new.user@mail.com",
+  "uName": "New U.",
+  "password": "my-password",
+  "dateOfBirth": "2000-01-30"
+}
+
+### List posts
+GET {{SocialMediaAPI_HostAddress}}/api/Post
+Accept: application/json
+
+### Get a post
+GET {{SocialMediaAPI_HostAddress}}/api/Post/1
+Accept: application/json
+
+### Create a post
+POST {{SocialMediaAPI_HostAddress}}/api/Post
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "text": "Hello, world!"
+}
+
+### List comments
+GET {{SocialMediaAPI_HostAddress}}/api/Comment
+Accept: application/json
+
+### Comment on a post
+POST {{SocialMediaAPI_HostAddress}}/api/Comment
+Content-Type: application/json
+
+{
+  "postInfo": {
+    "userId": 2,
+    "text": "Nice post!"
+  },
+  "postCommented": 1
+}
+
+### Like a post
+POST {{SocialMediaAPI_HostAddress}}/api/Like
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "postId": 3
+}
+
+### Remove a like
+DELETE {{SocialMediaAPI_HostAddress}}/api/Like
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "postId": 3
+}

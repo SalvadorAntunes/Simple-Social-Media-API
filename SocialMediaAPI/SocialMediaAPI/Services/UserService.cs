@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMediaAPI.Data;
 using SocialMediaAPI.Dtos;
+using SocialMediaAPI.Exceptions;
 using SocialMediaAPI.Models;
 
 namespace SocialMediaAPI.Services
 {
-    public class UserService(AppDbContext context) : IUserService
+    public class UserService(AppDbContext context, IPostService postService) : IUserService
     {
         public async Task<List<UserResponse>> GetUsersAsync()
             => await context.Users.Select(u => new UserResponse
@@ -28,8 +29,10 @@ namespace SocialMediaAPI.Services
                 LikedPosts = u.LikedPosts
             }).FirstOrDefaultAsync();
 
-        public async Task<User> CreateUserAsync(CreateUpdateUserRequest user)
+        public async Task<UserResponse> CreateUserAsync(CreateUpdateUserRequest user)
         {
+            await EnsureUsernameAndEmailAreFreeAsync(user, ignoreUserId: null);
+
             var newUser = new User
             {
                 Username = user.Username,
@@ -40,17 +43,35 @@ namespace SocialMediaAPI.Services
             };
             context.Users.Add(newUser);
             await context.SaveChangesAsync();
-            return newUser;
+
+            return new UserResponse
+            {
+                Id = newUser.Id,
+                Username = newUser.Username,
+                UName = newUser.UName
+            };
         }
 
         public async Task<bool> DeleteUserAsync(int id)
         {
-            var user = await context.Users.FindAsync(id);
-            if (user is null)
+            var userExists = await context.Users.AnyAsync(u => u.Id == id);
+            if (!userExists)
                 return false;
 
-            context.Users.Remove(user);
-            await context.SaveChangesAsync();
+            // Deleting a user also removes their posts and comments (with the replies
+            // below them) and their likes, all in one transaction.
+            await using var transaction = await context.Database.BeginTransactionAsync();
+
+            var postIds = await context.Posts
+                .Where(p => p.UserId == id)
+                .Select(p => p.Id)
+                .ToListAsync();
+            await postService.DeletePostsWithRepliesAsync(postIds);
+
+            await context.Likes.Where(l => l.UserId == id).ExecuteDeleteAsync();
+            await context.Users.Where(u => u.Id == id).ExecuteDeleteAsync();
+
+            await transaction.CommitAsync();
             return true;
         }
 
@@ -60,6 +81,8 @@ namespace SocialMediaAPI.Services
             if (existingUser is null)
                 return false;
 
+            await EnsureUsernameAndEmailAreFreeAsync(user, ignoreUserId: id);
+
             existingUser.Username = user.Username;
             existingUser.Email = user.Email;
             existingUser.UName = user.UName;
@@ -68,6 +91,20 @@ namespace SocialMediaAPI.Services
 
             await context.SaveChangesAsync();
             return true;
+        }
+
+        private async Task EnsureUsernameAndEmailAreFreeAsync(CreateUpdateUserRequest user, int? ignoreUserId)
+        {
+            var conflicts = await context.Users
+                .Where(u => u.Id != ignoreUserId && (u.Username == user.Username || u.Email == user.Email))
+                .Select(u => new { u.Username, u.Email })
+                .ToListAsync();
+
+            if (conflicts.Any(u => string.Equals(u.Username, user.Username, StringComparison.OrdinalIgnoreCase)))
+                throw new ConflictException("Username already in use");
+
+            if (conflicts.Count > 0)
+                throw new ConflictException("Email already in use");
         }
     }
 }

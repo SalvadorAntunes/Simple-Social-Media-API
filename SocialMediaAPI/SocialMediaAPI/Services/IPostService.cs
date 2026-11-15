@@ -11,6 +11,10 @@ namespace SocialMediaAPI.Services
 
         Task<PostResponse> CreatePostAsync(CreatePostRequest user);
 
+        Task<List<PostResponse>> GetPostsByIdsAsync(List<int> ids);
+
         Task<bool> DeletePostAsync(int id);
+
+        Task DeletePostsWithRepliesAsync(List<int> postIds);
     }
 }

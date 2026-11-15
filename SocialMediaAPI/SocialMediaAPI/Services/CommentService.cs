@@ -1,42 +1,39 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMediaAPI.Data;
 using SocialMediaAPI.Dtos;
+using SocialMediaAPI.Exceptions;
 using SocialMediaAPI.Models;
 
 namespace SocialMediaAPI.Services
 {
     public class CommentService(AppDbContext context, IPostService postService) : ICommentService
     {
-        private readonly AppDbContext _context = context;
-        private readonly IPostService _postService = postService;
-    
         public async Task<List<CommentResponse>> GetCommentsAsync()
-            => (await context.Comments.ToListAsync()).Select(c => new CommentResponse
+        {
+            var comments = await context.Comments.AsNoTracking().ToListAsync();
+
+            var commentIds = comments.Select(c => c.Id).ToList();
+            var posts = (await postService.GetPostsByIdsAsync(commentIds)).ToDictionary(p => p.Id);
+
+            return comments.Select(c => new CommentResponse
             {
                 PostCommented = c.PostCommented,
-                CommentItself = _postService.GetPostByIdAsync(c.Id).Result,
+                CommentItself = posts[c.Id]
             }).ToList();
+        }
 
         public async Task<CommentResponse?> GetCommentByIdAsync(int id)
-            => (await context.Comments.Where(c => c.Id == id).ToListAsync()).Select(c => new CommentResponse
-            {
-                PostCommented = c.PostCommented,
-                CommentItself = _postService.GetPostByIdAsync(c.Id).Result,
-            }).FirstOrDefault();
-
-        public async Task<bool> DeleteCommentAsync(int id)
         {
-            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == id);
+            var comment = await context.Comments.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
 
             if (comment is null)
-                return false;
+                return null;
 
-            _context.Comments.Remove(comment);
-            await _context.SaveChangesAsync();
-
-            _postService.DeletePostAsync(id).Wait();
-
-            return true;
+            return new CommentResponse
+            {
+                PostCommented = comment.PostCommented,
+                CommentItself = (await postService.GetPostByIdAsync(id))!
+            };
         }
 
         public async Task<CommentResponse> CreateCommentAsync(CreateCommentRequest request)
@@ -44,43 +41,46 @@ namespace SocialMediaAPI.Services
             var post = request.PostInfo;
 
             var userExists = await context.Users.AnyAsync(u => u.Id == post.UserId);
-
             if (!userExists)
-                throw new Exception("User not found");
+                throw new NotFoundException("User not found");
 
-            var newPost = new Post
-            {
-                UserId = post.UserId,
-                PostDate = DateTime.Now,
-                Text = post.Text
-            };
+            var commentedPostExists = await context.Posts.AnyAsync(p => p.Id == request.PostCommented);
+            if (!commentedPostExists)
+                throw new NotFoundException("Post not found");
 
-            context.Posts.Add(newPost);
-            await context.SaveChangesAsync();
-
+            // The comment and the post that holds its content are saved in a single
+            // SaveChanges, so either both are created or neither is.
             var newComment = new Comment
             {
-
-                Id = newPost.Id,
-                PostCommented = request.PostCommented
+                PostCommented = request.PostCommented,
+                IdNavigation = new Post
+                {
+                    UserId = post.UserId,
+                    PostDate = DateTime.UtcNow,
+                    Text = post.Text
+                }
             };
+
             context.Comments.Add(newComment);
-            await context.SaveChangesAsync(); 
-            var respondse = new CommentResponse
+            await context.SaveChangesAsync();
+
+            return new CommentResponse
             {
                 PostCommented = newComment.PostCommented,
-                CommentItself = new PostResponse
-                {
-                    Id = newPost.Id,
-                    UserId = newPost.UserId,
-                    PostDate = newPost.PostDate,
-                    Text = newPost.Text
-                },
-               
+                CommentItself = (await postService.GetPostByIdAsync(newComment.Id))!
             };
-            return respondse;
         }
-      
-        
+
+        public async Task<bool> DeleteCommentAsync(int id)
+        {
+            var commentExists = await context.Comments.AnyAsync(c => c.Id == id);
+
+            if (!commentExists)
+                return false;
+
+            // A comment is a post, so deleting the post removes the comment,
+            // its likes and its replies in one transaction.
+            return await postService.DeletePostAsync(id);
+        }
     }
 }

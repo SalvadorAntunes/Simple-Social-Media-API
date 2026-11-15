@@ -101,22 +101,21 @@ public partial class AppDbContext : DbContext
                 .HasColumnName("username");
 
             entity.HasMany(d => d.LikedPosts).WithMany(p => p.Users)
-                .UsingEntity<Dictionary<string, object>>(
-                    "Like",
+                .UsingEntity<Like>(
                     r => r.HasOne<Post>().WithMany()
-                        .HasForeignKey("PostId")
+                        .HasForeignKey(l => l.PostId)
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("FK_Likes_Post"),
                     l => l.HasOne<User>().WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey(l => l.UserId)
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("FK_Likes_User"),
                     j =>
                     {
-                        j.HasKey("UserId", "PostId").HasName("PK_Likes");
+                        j.HasKey(l => new { l.UserId, l.PostId }).HasName("PK_Likes");
                         j.ToTable("likes");
-                        j.IndexerProperty<int>("UserId").HasColumnName("userID");
-                        j.IndexerProperty<int>("PostId").HasColumnName("postID");
+                        j.Property(l => l.UserId).HasColumnName("userID");
+                        j.Property(l => l.PostId).HasColumnName("postID");
                     });
         });
 

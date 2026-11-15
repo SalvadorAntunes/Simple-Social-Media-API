@@ -1,8 +1,11 @@
-﻿namespace SocialMediaAPI.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SocialMediaAPI.Dtos
 {
     public class CreateCommentRequest
     {
-        public CreatePostRequest PostInfo { get; set; }
+        [Required]
+        public CreatePostRequest PostInfo { get; set; } = null!;
 
         public int PostCommented { get; set; }
 

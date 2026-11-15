@@ -1,4 +1,5 @@
-﻿using SocialMediaAPI.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using SocialMediaAPI.Models;
 
 namespace SocialMediaAPI.Dtos
 {
@@ -10,6 +11,8 @@ namespace SocialMediaAPI.Dtos
 
         //public DateTime PostDate { get; set; }
 
+        [Required]
+        [StringLength(250)]
         public string Text { get; set; } = null!;
 
         //public virtual Comment? CommentIdNavigation { get; set; }
